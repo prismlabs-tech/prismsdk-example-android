@@ -1,0 +1,138 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'tech.prismlabs.reference'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'tech.prismlabs.reference'
+        minSdk 30
+        targetSdk 34
+        versionCode 10
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    flavorDimensions += "version"
+    productFlavors {
+        create("development") {
+            // Assigns this product flavor to the "version" flavor dimension.
+            // If you are using only one dimension, this property is optional,
+            // and the plugin automatically assigns all the module's flavors to
+            // that dimension.
+            dimension = "version"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+
+            buildConfigField "String", "BASE_URL", "_INTERNAL_API_URL_"
+            buildConfigField "String", "API_KEY", "YOUR_API_KEY_HERE"
+        }
+        create("staging") {
+            dimension = "version"
+            applicationIdSuffix = ".stage"
+            versionNameSuffix = "-stage"
+
+            buildConfigField "String", "BASE_URL", "_INTERNAL_API_URL_"
+            buildConfigField "String", "API_KEY", "YOUR_API_KEY_HERE"
+        }
+        create("production") {
+            dimension = "version"
+            applicationIdSuffix = ".prod"
+            versionNameSuffix = "-prod"
+
+            // Production Sandbox URL meant for partner's internal testing
+            // TODO:  Make sure to replace this with final production URL/Key combo below
+            buildConfigField "String", "BASE_URL", "\"https://sandbox-api.hosted.prismlabs.tech\""
+            buildConfigField "String", "API_KEY", "YOUR_SANDBOX_API_KEY_HERE"
+
+            // Final production URL meant for actual push to production
+            //buildConfigField "String", "BASE_URL", "\"https://api.hosted.prismlabs.tech\""
+            //buildConfigField "String", "API_KEY", "YOUR_PRODUCTION_API_KEY_HERE"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+        buildConfig true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.5.4'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    // Exif
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
+
+    // Permissions
+    implementation "com.google.accompanist:accompanist-permissions:0.31.5-beta"
+
+    // Pose Detection
+    implementation "com.google.mlkit:pose-detection:17.0.0"
+    implementation "com.google.mlkit:pose-detection-accurate:17.0.0"
+
+    // JSON serialization/deserialization
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Navigation
+    implementation 'androidx.navigation:navigation-compose:2.7.7'
+
+    // HTTP Client
+    def ktor_version = "2.3.4"
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-android:$ktor_version")
+
+    // TODO: this isn't representative of how a normal consumer would consume the sdk
+    // instead they should consume it either via vendored lib or via published package.
+    // Vendored lib example (assumes consumer copied aar file into libs folder:
+    //    implementation fileTree(dir: "libs", include: ["*.aar"])
+    implementation(project(":prismsdk"))
+
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
+    implementation 'androidx.activity:activity-compose:1.8.2'
+    implementation platform('androidx.compose:compose-bom:2022.10.00')
+    implementation 'androidx.compose.ui:ui:1.6.1'
+    implementation 'androidx.compose.ui:ui-graphics:1.6.1'
+    implementation 'androidx.compose.ui:ui-tooling-preview:1.6.1'
+    implementation 'androidx.compose.foundation:foundation:1.6.1'
+    implementation 'androidx.compose.runtime:runtime-livedata:1.6.1'
+    implementation 'androidx.compose.material3:material3:1.2.0'
+    implementation 'androidx.wear.compose:compose-material:1.3.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.7.0'
+    implementation 'androidx.datastore:datastore-preferences:1.0.0'
+    
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+}
