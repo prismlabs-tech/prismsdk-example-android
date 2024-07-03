@@ -1,0 +1,23 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "PrismReference"
+include ':app'
+// TODO: the following is a temporary setup to make development of the sdk and the recorder app
+// easier. Instead of having to deal with an aar file directly as a build artifact from the sdk
+// and vendoring it into this project, you just have it cloned as a sister repository (meaning in
+// the same parent directory) and the setup below will reference it and build it as a dependency.
+// This setup is also reference in the app/build.gradle where it declares it as a dependency.
+include 'prismsdk'
+project(':prismsdk').projectDir = file('../prismsdk-android/prismsdk')
